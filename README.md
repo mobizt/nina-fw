@@ -1,4 +1,14 @@
-# Arduino NINA-W102 firmware
+# Arduino NINA-W102 firmware build 21060 based on original firmware v1.4.5
+
+This is the fork of Arduino NINA-W102 firmware.
+
+The purpose of this fork is to add the TCP upgradable feature to the original firmware.
+
+This custom built firmware was used with [ESP Mail Client library](https://github.com/mobizt/ESP-Mail-Client).
+
+Any issue related to the APIs provided by the original firmware should visit https://github.com/arduino/nina-fw
+
+
 
 This firmware uses [Espressif's IDF](https://github.com/espressif/esp-idf)
 
