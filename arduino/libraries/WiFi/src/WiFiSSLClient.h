@@ -26,9 +26,12 @@
 #include <mbedtls/ctr_drbg.h>
 #include <mbedtls/error.h>
 
+#include <mbedtls/platform.h>
+
 #include <Arduino.h>
 // #include <Client.h>
-// #include <IPAddress.h>
+#include <IPAddress.h>
+#include <string>
 
 class WiFiSSLClient /*: public Client*/ {
 
@@ -39,11 +42,13 @@ public:
 
   virtual int connect(/*IPAddress*/uint32_t ip, uint16_t port);
   virtual int connect(const char* host, uint16_t port);
-  virtual size_t write(uint8_t);
-  virtual size_t write(const uint8_t *buf, size_t size);
+  virtual int ns_connect(const char *host, uint16_t port);
+  virtual int ns_connectSSL(const char *host, uint16_t port, bool verifyRootCA = false);
+  virtual size_t _write(uint8_t);
+  virtual size_t _write(const uint8_t *buf, size_t size);
   virtual int available();
-  virtual int read();
-  virtual int read(uint8_t *buf, size_t size);
+  virtual int _read();
+  virtual int _read(uint8_t *buf, size_t size);
   virtual int peek();
   virtual void flush();
   virtual void stop();
@@ -57,9 +62,15 @@ public:
 
 private:
   int connect(const char* host, uint16_t port, bool sni);
+  int start_socket(const char *host, uint16_t port, int timeout);
+  int ns_lwip_write(const uint8_t *buf, int bufLen);
+  int ns_lwip_read(uint8_t *buf, int bufLen);
+  int ns_available();
+  int ns_read();
+  int ns_read(uint8_t *buf, size_t size);
 
 private:
-  static const char* ROOT_CAs;
+  static const char *ROOT_CAs;
 
   mbedtls_entropy_context _entropyContext;
   mbedtls_ctr_drbg_context _ctrDrbgContext;
@@ -69,6 +80,9 @@ private:
   mbedtls_x509_crt _caCrt;
   bool _connected;
   int _peek;
+  bool _ns = false;
+  bool _insecure = false;
+  std::string _rxBuf;
 
   SemaphoreHandle_t _mbedMutex;
 };
