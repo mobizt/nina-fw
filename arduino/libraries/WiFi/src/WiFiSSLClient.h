@@ -42,14 +42,22 @@ public:
 
   virtual int connect(/*IPAddress*/uint32_t ip, uint16_t port);
   virtual int connect(const char* host, uint16_t port);
+  /* Secure Connection Upgradable Supports */
   virtual int ns_connect(const char *host, uint16_t port);
+  /* Secure Connection Upgradable Supports */
   virtual int ns_connectSSL(const char *host, uint16_t port, bool verifyRootCA = false);
-  virtual size_t _write(uint8_t);
-  virtual size_t _write(const uint8_t *buf, size_t size);
-  virtual int available();
-  virtual int _read();
-  virtual int _read(uint8_t *buf, size_t size);
-  virtual int peek();
+  /* Secure Connection Upgradable Supports */
+  virtual size_t _write(uint8_t); //replacing virtual size_t write(uint8_t);
+  /* Secure Connection Upgradable Supports */
+  virtual size_t _write(const uint8_t *buf, size_t size); //replacing virtual size_t write(const uint8_t *buf, size_t size);
+  /* Secure Connection Upgradable Supports */
+  virtual int available(); //update virtual int available();
+  /* Secure Connection Upgradable Supports */
+  virtual int _read(); //replacing virtual int read();
+  /* Secure Connection Upgradable Supports */
+  virtual int _read(uint8_t *buf, size_t size); //replacing virtual int read(uint8_t *buf, size_t size);
+  /* Secure Connection Upgradable Supports */
+  virtual int peek(); //update virtual int peak();
   virtual void flush();
   virtual void stop();
   virtual uint8_t connected();
@@ -62,11 +70,17 @@ public:
 
 private:
   int connect(const char* host, uint16_t port, bool sni);
+  /* Secure Connection Upgradable Supports */
   int start_socket(const char *host, uint16_t port, int timeout);
+  /* Secure Connection Upgradable Supports */
   int ns_lwip_write(const uint8_t *buf, int bufLen);
+  /* Secure Connection Upgradable Supports */
   int ns_lwip_read(uint8_t *buf, int bufLen);
+  /* Secure Connection Upgradable Supports */
   int ns_available();
+  /* Secure Connection Upgradable Supports */
   int ns_read();
+  /* Secure Connection Upgradable Supports */
   int ns_read(uint8_t *buf, size_t size);
 
 private:
@@ -80,8 +94,11 @@ private:
   mbedtls_x509_crt _caCrt;
   bool _connected;
   int _peek;
+  /* Secure Connection Upgradable Supports */
   bool _ns = false;
+  /* Secure Connection Upgradable Supports */
   bool _insecure = false;
+  /* Secure Connection Upgradable Supports */
   std::string _rxBuf;
 
   SemaphoreHandle_t _mbedMutex;

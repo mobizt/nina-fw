@@ -167,6 +167,7 @@ int WiFiSSLClient::connect(const char *host, uint16_t port)
   return connect(host, port, true);
 }
 
+/* Secure Connection Upgradable Supports */
 int WiFiSSLClient::start_socket(const char *host, uint16_t port, int timeout)
 {
 
@@ -236,6 +237,7 @@ int WiFiSSLClient::start_socket(const char *host, uint16_t port, int timeout)
   return 1;
 }
 
+/* Secure Connection Upgradable Supports */
 int WiFiSSLClient::ns_connect(const char *host, uint16_t port)
 {
 
@@ -250,6 +252,7 @@ int WiFiSSLClient::ns_connect(const char *host, uint16_t port)
   }
 }
 
+/* Secure Connection Upgradable Supports */
 int WiFiSSLClient::ns_connectSSL(const char *host, uint16_t port, bool verifyRootCA)
 {
   synchronized
@@ -346,11 +349,13 @@ int WiFiSSLClient::ns_connectSSL(const char *host, uint16_t port, bool verifyRoo
   }
 }
 
+/* Secure Connection Upgradable Supports */
 int WiFiSSLClient::ns_lwip_write(const uint8_t *buf, int bufLen)
 {
   return lwip_write(_netContext.fd, buf, bufLen);
 }
 
+/* Secure Connection Upgradable Supports */
 int WiFiSSLClient::ns_lwip_read(uint8_t *buf, int bufLen)
 {
   fd_set readset;
@@ -377,6 +382,7 @@ int WiFiSSLClient::ns_lwip_read(uint8_t *buf, int bufLen)
   return read(_netContext.fd, buf, bufLen);
 }
 
+/* Secure Connection Upgradable Supports */
 int WiFiSSLClient::connect(/*IPAddress*/ uint32_t ip, uint16_t port)
 {
   char ipStr[16];
@@ -388,9 +394,11 @@ int WiFiSSLClient::connect(/*IPAddress*/ uint32_t ip, uint16_t port)
   return connect(ipStr, port, false);
 }
 
-size_t WiFiSSLClient::_write(uint8_t b) { return _write(&b, 1); }
+/* Secure Connection Upgradable Supports */
+size_t WiFiSSLClient::_write(uint8_t b) { return _write(&b, 1); } //replacing virtual size_t write(uint8_t);
 
-size_t WiFiSSLClient::_write(const uint8_t *buf, size_t size)
+/* Secure Connection Upgradable Supports */
+size_t WiFiSSLClient::_write(const uint8_t *buf, size_t size) //replacing size_t write(const uint8_t *buf, size_t size)
 {
   synchronized
   {
@@ -412,7 +420,8 @@ size_t WiFiSSLClient::_write(const uint8_t *buf, size_t size)
   }
 }
 
-int WiFiSSLClient::available()
+/* Secure Connection Upgradable Supports */
+int WiFiSSLClient::available() //update int available()
 {
   synchronized
   {
@@ -437,6 +446,7 @@ int WiFiSSLClient::available()
   }
 }
 
+/* Secure Connection Upgradable Supports */
 int WiFiSSLClient::ns_available()
 {
 
@@ -459,7 +469,8 @@ int WiFiSSLClient::ns_available()
   return result;
 }
 
-int WiFiSSLClient::_read()
+/* Secure Connection Upgradable Supports */
+int WiFiSSLClient::_read() //replacing int read()
 {
 
   if (_ns)
@@ -483,6 +494,7 @@ int WiFiSSLClient::_read()
   }
 }
 
+/* Secure Connection Upgradable Supports */
 int WiFiSSLClient::ns_read()
 {
 
@@ -508,7 +520,8 @@ int WiFiSSLClient::ns_read()
   return c;
 }
 
-int WiFiSSLClient::_read(uint8_t *buf, size_t size)
+/* Secure Connection Upgradable Supports */
+int WiFiSSLClient::_read(uint8_t *buf, size_t size) //replacing int read(uint8_t *buf, size_t size)
 {
   synchronized
   {
@@ -543,6 +556,7 @@ int WiFiSSLClient::_read(uint8_t *buf, size_t size)
   }
 }
 
+/* Secure Connection Upgradable Supports */
 int WiFiSSLClient::ns_read(uint8_t *buf, size_t size)
 {
 
@@ -562,7 +576,8 @@ int WiFiSSLClient::ns_read(uint8_t *buf, size_t size)
   }
 }
 
-int WiFiSSLClient::peek()
+/* Secure Connection Upgradable Supports */
+int WiFiSSLClient::peek() //update int peak();
 {
   if (_peek == -1)
   {

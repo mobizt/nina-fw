@@ -1,4 +1,4 @@
-# Arduino NINA-W102 firmware build 21060 based on original firmware v1.4.5
+# Arduino NINA-W102 firmware build 21110 based on original firmware v1.4.8
 
 This is the fork of Arduino NINA-W102 firmware.
 
@@ -7,7 +7,6 @@ The purpose of this fork is to add the TCP upgradable feature to the original fi
 This custom built firmware was used with [ESP Mail Client library](https://github.com/mobizt/ESP-Mail-Client).
 
 Any issue related to the APIs provided by the original firmware should visit https://github.com/arduino/nina-fw
-
 
 
 This firmware uses [Espressif's IDF](https://github.com/espressif/esp-idf)
@@ -61,25 +60,3 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-
-
-
-Copyright (c) 2021 mobizt
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.

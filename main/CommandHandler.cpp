@@ -38,9 +38,9 @@
 
 const char FIRMWARE_VERSION[6] = "1.4.8";
 
-const char BUILT_NO[6] = "21060";
+const char BUILT_NO[6] = "21120";
 
-/*IPAddress*/ uint32_t resolvedHostname;
+/*IPAddress*/uint32_t resolvedHostname;
 
 #define MAX_SOCKETS CONFIG_LWIP_MAX_SOCKETS
 uint8_t socketTypes[MAX_SOCKETS];
@@ -51,7 +51,6 @@ WiFiServer tcpServers[MAX_SOCKETS];
 
 WiFiClient bearssl_tcp_client;
 BearSSLClient bearsslClient(bearssl_tcp_client, ArduinoIoTCloudTrustAnchor, ArduinoIoTCloudTrustAnchor_NUM);
-
 
 int setNet(const uint8_t command[], uint8_t response[])
 {
@@ -162,13 +161,10 @@ int setHostname(const uint8_t command[], uint8_t response[])
 
 int setPowerMode(const uint8_t command[], uint8_t response[])
 {
-  if (command[4])
-  {
+  if (command[4]) {
     // low power
     WiFi.lowPowerMode();
-  }
-  else
-  {
+  } else {
     // no low power
     WiFi.noLowPowerMode();
   }
@@ -193,12 +189,9 @@ int setApNet(const uint8_t command[], uint8_t response[])
   response[2] = 1; // number of parameters
   response[3] = 1; // parameter 1 length
 
-  if (WiFi.beginAP(ssid, channel) != WL_AP_FAILED)
-  {
+  if (WiFi.beginAP(ssid, channel) != WL_AP_FAILED) {
     response[4] = 1;
-  }
-  else
-  {
+  } else {
     response[4] = 0;
   }
 
@@ -221,12 +214,9 @@ int setApPassPhrase(const uint8_t command[], uint8_t response[])
   response[2] = 1; // number of parameters
   response[3] = 1; // parameter 1 length
 
-  if (WiFi.beginAP(ssid, pass, channel) != WL_AP_FAILED)
-  {
+  if (WiFi.beginAP(ssid, pass, channel) != WL_AP_FAILED) {
     response[4] = 1;
-  }
-  else
-  {
+  } else {
     response[4] = 0;
   }
 
@@ -246,8 +236,7 @@ int setDebug(const uint8_t command[], uint8_t response[])
   return 6;
 }
 
-extern "C"
-{
+extern "C" {
   uint8_t temprature_sens_read();
 }
 
@@ -255,7 +244,7 @@ int getTemperature(const uint8_t command[], uint8_t response[])
 {
   float temperature = (temprature_sens_read() - 32) / 1.8;
 
-  response[2] = 1;                   // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(temperature); // parameter 1 length
 
   memcpy(&response[4], &temperature, sizeof(temperature));
@@ -287,9 +276,9 @@ int getConnStatus(const uint8_t command[], uint8_t response[])
 
 int getIPaddr(const uint8_t command[], uint8_t response[])
 {
-  /*IPAddress*/ uint32_t ip = WiFi.localIP();
-  /*IPAddress*/ uint32_t mask = WiFi.subnetMask();
-  /*IPAddress*/ uint32_t gwip = WiFi.gatewayIP();
+  /*IPAddress*/uint32_t ip = WiFi.localIP();
+  /*IPAddress*/uint32_t mask = WiFi.subnetMask();
+  /*IPAddress*/uint32_t gwip = WiFi.gatewayIP();
 
   response[2] = 3; // number of parameters
 
@@ -307,11 +296,11 @@ int getIPaddr(const uint8_t command[], uint8_t response[])
 
 int getMACaddr(const uint8_t command[], uint8_t response[])
 {
-  uint8_t mac[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  uint8_t mac[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
   WiFi.macAddress(mac);
 
-  response[2] = 1;           // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(mac); // parameter 1 length
 
   memcpy(&response[4], mac, sizeof(mac));
@@ -322,10 +311,10 @@ int getMACaddr(const uint8_t command[], uint8_t response[])
 int getCurrSSID(const uint8_t command[], uint8_t response[])
 {
   // ssid
-  const char *ssid = WiFi.SSID();
+  const char* ssid = WiFi.SSID();
   uint8_t ssidLen = strlen(ssid);
 
-  response[2] = 1;       // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = ssidLen; // parameter 1 length
 
   memcpy(&response[4], ssid, ssidLen);
@@ -351,7 +340,7 @@ int getCurrRSSI(const uint8_t command[], uint8_t response[])
 {
   int32_t rssi = WiFi.RSSI();
 
-  response[2] = 1;            // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(rssi); // parameter 1 length
 
   memcpy(&response[4], &rssi, sizeof(rssi));
@@ -377,9 +366,8 @@ int scanNetworks(const uint8_t command[], uint8_t response[])
 
   response[2] = num;
 
-  for (int i = 0; i < num; i++)
-  {
-    const char *ssid = WiFi.SSID(i);
+  for (int i = 0; i < num; i++) {
+    const char* ssid = WiFi.SSID(i);
     int ssidLen = strlen(ssid);
 
     response[responseLength++] = ssidLen;
@@ -398,15 +386,12 @@ int startServerTcp(const uint8_t command[], uint8_t response[])
   uint8_t socket;
   uint8_t type;
 
-  if (command[2] == 3)
-  {
+  if (command[2] == 3) {
     memcpy(&port, &command[4], sizeof(port));
     port = ntohs(port);
     socket = command[7];
     type = command[9];
-  }
-  else
-  {
+  } else {
     memcpy(&ip, &command[4], sizeof(ip));
     memcpy(&port, &command[9], sizeof(port));
     port = ntohs(port);
@@ -417,27 +402,20 @@ int startServerTcp(const uint8_t command[], uint8_t response[])
   response[2] = 1; // number of parameters
   response[3] = 1; // parameter 1 length
 
-  if (type == 0x00)
-  {
+  if (type == 0x00) {
     tcpServers[socket] = WiFiServer(port);
 
     tcpServers[socket].begin();
 
     socketTypes[socket] = 0x00;
     response[4] = 1;
-  }
-  else if (type == 0x01 && udps[socket].begin(port))
-  {
+  } else if (type == 0x01 && udps[socket].begin(port)) {
     socketTypes[socket] = 0x01;
     response[4] = 1;
-  }
-  else if (type == 0x03 && udps[socket].beginMulticast(ip, port))
-  {
+  } else if (type == 0x03 && udps[socket].beginMulticast(ip, port)) {
     socketTypes[socket] = 0x01;
     response[4] = 1;
-  }
-  else
-  {
+  } else {
     response[4] = 0;
   }
 
@@ -451,12 +429,9 @@ int getStateTcp(const uint8_t command[], uint8_t response[])
   response[2] = 1; // number of parameters
   response[3] = 1; // parameter 1 length
 
-  if (tcpServers[socket])
-  {
+  if (tcpServers[socket]) {
     response[4] = 1;
-  }
-  else
-  {
+  } else {
     response[4] = 0;
   }
 
@@ -479,44 +454,34 @@ int availDataTcp(const uint8_t command[], uint8_t response[])
   uint8_t socket = command[4];
   uint16_t available = 0;
 
-  if (socketTypes[socket] == 0x00)
-  {
-    if (tcpServers[socket])
-    {
+  if (socketTypes[socket] == 0x00) {
+    if (tcpServers[socket]) {
       WiFiClient client = tcpServers[socket].available();
 
       available = 255;
 
-      if (client)
-      {
+      if (client) {
         // try to find existing socket slot
-        for (int i = 0; i < MAX_SOCKETS; i++)
-        {
-          if (i == socket)
-          {
+        for (int i = 0; i < MAX_SOCKETS; i++) {
+          if (i == socket) {
             continue; // skip this slot
           }
 
-          if (socketTypes[i] == 0x00 && tcpClients[i] == client)
-          {
+          if (socketTypes[i] == 0x00 && tcpClients[i] == client) {
             available = i;
             break;
           }
         }
 
-        if (available == 255)
-        {
+        if (available == 255) {
           // book keep new slot
 
-          for (int i = 0; i < MAX_SOCKETS; i++)
-          {
-            if (i == socket)
-            {
+          for (int i = 0; i < MAX_SOCKETS; i++) {
+            if (i == socket) {
               continue; // skip this slot
             }
 
-            if (socketTypes[i] == 255)
-            {
+            if (socketTypes[i] == 255) {
               socketTypes[i] = 0x00;
               tcpClients[i] = client;
 
@@ -526,26 +491,18 @@ int availDataTcp(const uint8_t command[], uint8_t response[])
           }
         }
       }
-    }
-    else
-    {
+    } else {
       available = tcpClients[socket].available();
     }
-  }
-  else if (socketTypes[socket] == 0x01)
-  {
+  } else if (socketTypes[socket] == 0x01) {
     available = udps[socket].available();
-  }
-  else if (socketTypes[socket] == 0x02)
-  {
+  } else if (socketTypes[socket] == 0x02) {
     available = tlsClients[socket].available();
-  }
-  else if (socketTypes[socket] == 0x04)
-  {
+  } else if (socketTypes[socket] == 0x04) {
     available = bearsslClient.available();
   }
 
-  response[2] = 1;                 // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(available); // parameter 1 length
 
   memcpy(&response[4], &available, sizeof(available));
@@ -561,47 +518,28 @@ int getDataTcp(const uint8_t command[], uint8_t response[])
   response[2] = 1; // number of parameters
   response[3] = 1; // parameter 1 length
 
-  if (socketTypes[socket] == 0x00)
-  {
-    if (peek)
-    {
+  if (socketTypes[socket] == 0x00) {
+    if (peek) {
       response[4] = tcpClients[socket].peek();
-    }
-    else
-    {
+    } else {
       response[4] = tcpClients[socket].read();
     }
-  }
-  else if (socketTypes[socket] == 0x01)
-  {
-    if (peek)
-    {
+  } else if (socketTypes[socket] == 0x01) {
+    if (peek) {
       response[4] = udps[socket].peek();
-    }
-    else
-    {
+    } else {
       response[4] = udps[socket].read();
     }
-  }
-  else if (socketTypes[socket] == 0x02)
-  {
-    if (peek)
-    {
+  } else if (socketTypes[socket] == 0x02) {
+    if (peek) {
       response[4] = tlsClients[socket].peek();
-    }
-    else
-    {
+    } else {
       response[4] = tlsClients[socket]._read();
     }
-  }
-  else if (socketTypes[socket] == 0x04)
-  {
-    if (peek)
-    {
+  } else if (socketTypes[socket] == 0x04) {
+    if (peek) {
       response[4] = bearsslClient.peek();
-    }
-    else
-    {
+    } else {
       response[4] = bearsslClient.read();
     }
   }
@@ -611,10 +549,8 @@ int getDataTcp(const uint8_t command[], uint8_t response[])
 
 static ECCX08CertClass eccx08_cert;
 unsigned long getTime();
-static void configureECCx08()
-{
-  if (!ECCX08.begin())
-  {
+static void configureECCx08() {
+  if (!ECCX08.begin()) {
     ESP_LOGE("ECCX08", "ECCX08.begin() failed");
     return;
   }
@@ -622,15 +558,13 @@ static void configureECCx08()
   ESP_LOGI("ECCX08", "ArduinoBearSSL.getTime() = %lu", ArduinoBearSSL.getTime());
 
   String device_id;
-  if (!CryptoUtil::readDeviceId(ECCX08, device_id, ECCX08Slot::DeviceId))
-  {
+  if (!CryptoUtil::readDeviceId(ECCX08, device_id, ECCX08Slot::DeviceId)) {
     ESP_LOGE("ECCX08", "Cryptography processor read failure.");
     return;
   }
   ESP_LOGI("ECCX08", "device_id = %s", device_id.c_str());
 
-  if (!CryptoUtil::reconstructCertificate(eccx08_cert, device_id, ECCX08Slot::Key, ECCX08Slot::CompressedCertificate, ECCX08Slot::SerialNumberAndAuthorityKeyIdentifier))
-  {
+  if (!CryptoUtil::reconstructCertificate(eccx08_cert, device_id, ECCX08Slot::Key, ECCX08Slot::CompressedCertificate, ECCX08Slot::SerialNumberAndAuthorityKeyIdentifier)) {
     ESP_LOGE("ECCX08", "Cryptography certificate reconstruction failure.");
     return;
   }
@@ -646,20 +580,16 @@ int startClientTcp(const uint8_t command[], uint8_t response[])
   uint16_t port;
   uint8_t socket;
   uint8_t type;
-  int result = 0;
 
   memset(host, 0x00, sizeof(host));
 
-  if (command[2] == 4)
-  {
+  if (command[2] == 4) {
     memcpy(&ip, &command[4], sizeof(ip));
     memcpy(&port, &command[9], sizeof(port));
     port = ntohs(port);
     socket = command[12];
     type = command[14];
-  }
-  else
-  {
+  } else {
     memcpy(host, &command[4], command[3]);
     memcpy(&ip, &command[5 + command[3]], sizeof(ip));
     memcpy(&port, &command[10 + command[3]], sizeof(port));
@@ -668,20 +598,16 @@ int startClientTcp(const uint8_t command[], uint8_t response[])
     type = command[15 + command[3]];
   }
 
-  if (type == 0x00)
-  {
+  if (type == 0x00) {
+    int result;
 
-    if (host[0] != '\0')
-    {
+    if (host[0] != '\0') {
       result = tcpClients[socket].connect(host, port);
-    }
-    else
-    {
+    } else {
       result = tcpClients[socket].connect(ip, port);
     }
 
-    if (result)
-    {
+    if (result) {
       socketTypes[socket] = 0x00;
 
       response[2] = 1; // number of parameters
@@ -689,28 +615,21 @@ int startClientTcp(const uint8_t command[], uint8_t response[])
       response[4] = 1;
 
       return 6;
-    }
-    else
-    {
+    } else {
       response[2] = 0; // number of parameters
 
       return 4;
     }
-  }
-  else if (type == 0x01)
-  {
+  } else if (type == 0x01) {
+    int result;
 
-    if (host[0] != '\0')
-    {
+    if (host[0] != '\0') {
       result = udps[socket].beginPacket(host, port);
-    }
-    else
-    {
+    } else {
       result = udps[socket].beginPacket(ip, port);
     }
 
-    if (result)
-    {
+    if (result) {
       socketTypes[socket] = 0x01;
 
       response[2] = 1; // number of parameters
@@ -718,25 +637,29 @@ int startClientTcp(const uint8_t command[], uint8_t response[])
       response[4] = 1;
 
       return 6;
-    }
-    else
-    {
+    } else {
       response[2] = 0; // number of parameters
 
       return 4;
     }
   }
+  /* Secure Connection Upgradable Supports */
   else if (type == 0x02 || type == 0xf0 || type == 0xf1 || type == 0xf2)
   {
+    int result = 0;
 
+    /* Secure Connection Upgradable Supports */
     if (host[0] != '\0')
     {
       if (type == 0x02)
         result = tlsClients[socket].connect(host, port);
+      /* Secure Connection Upgradable Supports */
       else if (type == 0xf0)
         result = tlsClients[socket].ns_connect(host, port);
+      /* Secure Connection Upgradable Supports */
       else if (type == 0xf1)
         result = tlsClients[socket].ns_connectSSL(host, port);
+      /* Secure Connection Upgradable Supports */
       else if (type == 0xf2)
         result = tlsClients[socket].ns_connectSSL(host, port, true);
     }
@@ -745,8 +668,7 @@ int startClientTcp(const uint8_t command[], uint8_t response[])
       result = tlsClients[socket].connect(ip, port);
     }
 
-    if (result)
-    {
+    if (result) {
       socketTypes[socket] = 0x02;
 
       response[2] = 1; // number of parameters
@@ -754,30 +676,23 @@ int startClientTcp(const uint8_t command[], uint8_t response[])
       response[4] = 1;
 
       return 6;
-    }
-    else
-    {
+    } else {
       response[2] = 0; // number of parameters
 
       return 4;
     }
-  }
-  else if (type == 0x04)
-  {
+  } else if (type == 0x04) {
+    int result;
 
     configureECCx08();
 
-    if (host[0] != '\0')
-    {
+    if (host[0] != '\0') {
       result = bearsslClient.connect(host, port);
-    }
-    else
-    {
+    } else {
       result = bearsslClient.connect(ip, port);
     }
 
-    if (result)
-    {
+    if (result) {
       socketTypes[socket] = 0x04;
 
       response[2] = 1; // number of parameters
@@ -785,16 +700,12 @@ int startClientTcp(const uint8_t command[], uint8_t response[])
       response[4] = 1;
 
       return 6;
-    }
-    else
-    {
+    } else {
       response[2] = 0; // number of parameters
 
       return 4;
     }
-  }
-  else
-  {
+  } else {
     response[2] = 0; // number of parameters
 
     return 4;
@@ -805,20 +716,13 @@ int stopClientTcp(const uint8_t command[], uint8_t response[])
 {
   uint8_t socket = command[4];
 
-  if (socketTypes[socket] == 0x00)
-  {
+  if (socketTypes[socket] == 0x00) {
     tcpClients[socket].stop();
-  }
-  else if (socketTypes[socket] == 0x01)
-  {
+  } else if (socketTypes[socket] == 0x01) {
     udps[socket].stop();
-  }
-  else if (socketTypes[socket] == 0x02)
-  {
+  } else if (socketTypes[socket] == 0x02) {
     tlsClients[socket].stop();
-  }
-  else if (socketTypes[socket] == 0x04)
-  {
+  } else if (socketTypes[socket] == 0x04) {
     bearsslClient.stop();
   }
   socketTypes[socket] = 255;
@@ -837,20 +741,13 @@ int getClientStateTcp(const uint8_t command[], uint8_t response[])
   response[2] = 1; // number of parameters
   response[3] = 1; // parameter 1 length
 
-  if ((socketTypes[socket] == 0x00) && tcpClients[socket].connected())
-  {
+  if ((socketTypes[socket] == 0x00) && tcpClients[socket].connected()) {
     response[4] = 4;
-  }
-  else if ((socketTypes[socket] == 0x02) && tlsClients[socket].connected())
-  {
+  } else if ((socketTypes[socket] == 0x02) && tlsClients[socket].connected()) {
     response[4] = 4;
-  }
-  else if ((socketTypes[socket] == 0x04) && bearsslClient.connected())
-  {
+  } else if ((socketTypes[socket] == 0x04) && bearsslClient.connected()) {
     response[4] = 4;
-  }
-  else
-  {
+  } else {
     socketTypes[socket] = 255;
     response[4] = 0;
   }
@@ -874,7 +771,7 @@ int getIdxRSSI(const uint8_t command[], uint8_t response[])
   // RSSI
   int32_t rssi = WiFi.RSSI(command[4]);
 
-  response[2] = 1;            // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(rssi); // parameter 1 length
 
   memcpy(&response[4], &rssi, sizeof(rssi));
@@ -903,13 +800,10 @@ int reqHostByName(const uint8_t command[], uint8_t response[])
   response[2] = 1; // number of parameters
   response[3] = 1; // parameter 1 length
 
-  resolvedHostname = /*IPAddress(255, 255, 255, 255)*/ 0xffffffff;
-  if (WiFi.hostByName(host, resolvedHostname))
-  {
+  resolvedHostname = /*IPAddress(255, 255, 255, 255)*/0xffffffff;
+  if (WiFi.hostByName(host, resolvedHostname)) {
     response[4] = 1;
-  }
-  else
-  {
+  } else {
     response[4] = 0;
   }
 
@@ -936,7 +830,7 @@ int startScanNetworks(const uint8_t command[], uint8_t response[])
 
 int getFwVersion(const uint8_t command[], uint8_t response[])
 {
-  response[2] = 1;                        // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(FIRMWARE_VERSION); // parameter 1 length
 
   memcpy(&response[4], FIRMWARE_VERSION, sizeof(FIRMWARE_VERSION));
@@ -944,10 +838,11 @@ int getFwVersion(const uint8_t command[], uint8_t response[])
   return 11;
 }
 
+/* Secure Connection Upgradable Supports */
 int getFwBuild(const uint8_t command[], uint8_t response[])
 {
-  response[2] = 1;                        // number of parameters
-  response[3] = sizeof(BUILT_NO);         // parameter 1 length
+  response[2] = 1;                // number of parameters
+  response[3] = sizeof(BUILT_NO); // parameter 1 length
 
   memcpy(&response[4], BUILT_NO, sizeof(BUILT_NO));
 
@@ -961,12 +856,9 @@ int sendUDPdata(const uint8_t command[], uint8_t response[])
   response[2] = 1; // number of parameters
   response[3] = 1; // parameter 1 length
 
-  if (udps[socket].endPacket())
-  {
+  if (udps[socket].endPacket()) {
     response[4] = 1;
-  }
-  else
-  {
+  } else {
     response[4] = 0;
   }
 
@@ -977,28 +869,21 @@ int getRemoteData(const uint8_t command[], uint8_t response[])
 {
   uint8_t socket = command[4];
 
-  /*IPAddress*/ uint32_t ip = /*IPAddress(0, 0, 0, 0)*/ 0;
+  /*IPAddress*/uint32_t ip = /*IPAddress(0, 0, 0, 0)*/0;
   uint16_t port = 0;
 
-  if (socketTypes[socket] == 0x00)
-  {
+  if (socketTypes[socket] == 0x00) {
     ip = tcpClients[socket].remoteIP();
     port = tcpClients[socket].remotePort();
-  }
-  else if (socketTypes[socket] == 0x01)
-  {
+  } else if (socketTypes[socket] == 0x01) {
     ip = udps[socket].remoteIP();
     port = udps[socket].remotePort();
-  }
-  else if (socketTypes[socket] == 0x02)
-  {
+  } else if (socketTypes[socket] == 0x02) {
     ip = tlsClients[socket].remoteIP();
     port = tlsClients[socket].remotePort();
-  }
-  else if (socketTypes[socket] == 0x04)
-  {
-    ip = static_cast<WiFiClient *>(bearsslClient.getClient())->remoteIP();
-    port = static_cast<WiFiClient *>(bearsslClient.getClient())->remotePort();
+  } else if (socketTypes[socket] == 0x04) {
+    ip = static_cast<WiFiClient*>(bearsslClient.getClient())->remoteIP();
+    port = static_cast<WiFiClient*>(bearsslClient.getClient())->remotePort();
   }
 
   response[2] = 2; // number of parameters
@@ -1017,7 +902,7 @@ int getTime(const uint8_t command[], uint8_t response[])
 {
   unsigned long now = WiFi.getTime();
 
-  response[2] = 1;           // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(now); // parameter 1 length
 
   memcpy(&response[4], &now, sizeof(now));
@@ -1051,7 +936,7 @@ int getIdxChannel(const uint8_t command[], uint8_t response[])
 
 int setEnt(const uint8_t command[], uint8_t response[])
 {
-  const uint8_t *commandPtr = &command[3];
+  const uint8_t* commandPtr = &command[3];
   uint8_t eapType;
   char ssid[32 + 1];
 
@@ -1073,14 +958,13 @@ int setEnt(const uint8_t command[], uint8_t response[])
   memcpy(ssid, commandPtr, ssidLen);
   commandPtr += ssidLen;
 
-  if (eapType == 0)
-  {
+  if (eapType == 0) {
     // PEAP/MSCHAPv2
     char username[128 + 1];
     char password[128 + 1];
     char identity[128 + 1];
-    const char *rootCA;
-
+    const char* rootCA;
+    
     memset(username, 0x00, sizeof(username));
     memset(password, 0x00, sizeof(password));
     memset(identity, 0x00, sizeof(identity));
@@ -1115,18 +999,16 @@ int setEnt(const uint8_t command[], uint8_t response[])
     commandPtr += sizeof(rootCALen);
 
     // rootCA - data
-    rootCA = (const char *)commandPtr;
+    rootCA = (const char*)commandPtr;
     commandPtr += rootCALen;
 
     WiFi.beginEnterprise(ssid, username, password, identity, rootCA);
-  }
-  else
-  {
+  } else {
     // EAP-TLS
-    const char *cert;
-    const char *key;
+    const char* cert;
+    const char* key;
     char identity[128 + 1];
-    const char *rootCA;
+    const char* rootCA;
 
     memset(identity, 0x00, sizeof(identity));
 
@@ -1135,7 +1017,7 @@ int setEnt(const uint8_t command[], uint8_t response[])
     commandPtr += sizeof(certLen);
 
     // cert - data
-    cert = (const char *)commandPtr;
+    cert = (const char*)commandPtr;
     commandPtr += certLen;
 
     // key - length
@@ -1143,7 +1025,7 @@ int setEnt(const uint8_t command[], uint8_t response[])
     commandPtr += sizeof(keyLen);
 
     // key - data
-    key = (const char *)commandPtr;
+    key = (const char*)commandPtr;
     commandPtr += keyLen;
 
     // identity - length
@@ -1159,7 +1041,7 @@ int setEnt(const uint8_t command[], uint8_t response[])
     commandPtr += sizeof(rootCALen);
 
     // rootCA - data
-    rootCA = (const char *)commandPtr;
+    rootCA = (const char*)commandPtr;
     commandPtr += rootCALen;
 
     WiFi.beginEnterpriseTLS(ssid, cert, key, identity, rootCA);
@@ -1182,24 +1064,17 @@ int sendDataTcp(const uint8_t command[], uint8_t response[])
   memcpy(&length, &command[6], sizeof(length));
   length = ntohs(length);
 
-  if ((socketTypes[socket] == 0x00) && tcpServers[socket])
-  {
+  if ((socketTypes[socket] == 0x00) && tcpServers[socket]) {
     written = tcpServers[socket].write(&command[8], length);
-  }
-  else if (socketTypes[socket] == 0x00)
-  {
+  } else if (socketTypes[socket] == 0x00) {
     written = tcpClients[socket].write(&command[8], length);
-  }
-  else if (socketTypes[socket] == 0x02)
-  {
+  } else if (socketTypes[socket] == 0x02) {
     written = tlsClients[socket]._write(&command[8], length);
-  }
-  else if (socketTypes[socket] == 0x04)
-  {
+  } else if (socketTypes[socket] == 0x04) {
     written = bearsslClient.write(&command[8], length);
   }
 
-  response[2] = 1;               // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(written); // parameter 1 length
   memcpy(&response[4], &written, sizeof(written));
 
@@ -1215,29 +1090,21 @@ int getDataBufTcp(const uint8_t command[], uint8_t response[])
   socket = command[5];
   memcpy(&length, &command[8], sizeof(length));
 
-  if (socketTypes[socket] == 0x00)
-  {
+  if (socketTypes[socket] == 0x00) {
     read = tcpClients[socket].read(&response[5], length);
-  }
-  else if (socketTypes[socket] == 0x01)
-  {
+  } else if (socketTypes[socket] == 0x01) {
     read = udps[socket].read(&response[5], length);
-  }
-  else if (socketTypes[socket] == 0x02)
-  {
+  } else if (socketTypes[socket] == 0x02) {
     read = tlsClients[socket]._read(&response[5], length);
-  }
-  else if (socketTypes[socket] == 0x04)
-  {
+  } else if (socketTypes[socket] == 0x04) {
     read = bearsslClient.read(&response[5], length);
   }
 
-  if (read < 0)
-  {
+  if (read < 0) {
     read = 0;
   }
 
-  response[2] = 1;                  // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = (read >> 8) & 0xff; // parameter 1 length
   response[4] = (read >> 0) & 0xff;
 
@@ -1256,12 +1123,9 @@ int insertDataBuf(const uint8_t command[], uint8_t response[])
   response[2] = 1; // number of parameters
   response[3] = 1; // parameter 1 length
 
-  if (udps[socket].write(&command[8], length) != 0)
-  {
+  if (udps[socket].write(&command[8], length) != 0) {
     response[4] = 1;
-  }
-  else
-  {
+  } else {
     response[4] = 0;
   }
 
@@ -1279,7 +1143,7 @@ int ping(const uint8_t command[], uint8_t response[])
 
   result = WiFi.ping(ip, ttl);
 
-  response[2] = 1;              // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(result); // parameter 1 length
   memcpy(&response[4], &result, sizeof(result));
 
@@ -1290,16 +1154,14 @@ int getSocket(const uint8_t command[], uint8_t response[])
 {
   uint8_t result = 255;
 
-  for (int i = 0; i < MAX_SOCKETS; i++)
-  {
-    if (socketTypes[i] == 255)
-    {
+  for (int i = 0; i < MAX_SOCKETS; i++) {
+    if (socketTypes[i] == 255) {
       result = i;
       break;
     }
   }
 
-  response[2] = 1;              // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(result); // parameter 1 length
   response[4] = result;
 
@@ -1361,8 +1223,7 @@ int getDigitalRead(const uint8_t command[], uint8_t response[])
   return 6;
 }
 
-extern "C"
-{
+extern "C" {
 #include <driver/adc.h>
 }
 
@@ -1379,15 +1240,14 @@ int getAnalogRead(const uint8_t command[], uint8_t response[])
   /* Read the analog value from the pin. */
   uint16_t const adc_raw = adc1_get_raw((adc1_channel_t)adc_channel);
 
-  response[2] = 1;               // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(adc_raw); // parameter 1 length = 2 bytes
   memcpy(&response[4], &adc_raw, sizeof(adc_raw));
 
   return 7;
 }
 
-int writeFile(const uint8_t command[], uint8_t response[])
-{
+int writeFile(const uint8_t command[], uint8_t response[]) {
   char filename[32 + 1];
   size_t len;
   size_t offset;
@@ -1398,14 +1258,13 @@ int writeFile(const uint8_t command[], uint8_t response[])
   memset(filename, 0x00, sizeof(filename));
   memcpy(filename, &command[6 + command[3] + command[4 + command[3]]], command[5 + command[3] + command[4 + command[3]]]);
 
-  FILE *f = fopen(filename, "ab+");
-  if (f == NULL)
-  {
+  FILE* f = fopen(filename, "ab+");
+  if (f == NULL) {
     return -1;
   }
 
   fseek(f, offset, SEEK_SET);
-  const uint8_t *data = &command[7 + command[3] + command[4 + command[3]] + command[5 + command[3] + command[4 + command[3]]]];
+  const uint8_t* data = &command[7 + command[3] + command[4 + command[3]] + command[5 + command[3] + command[4 + command[3]]]];
 
   int ret = fwrite(data, 1, len, f);
   fclose(f);
@@ -1413,8 +1272,7 @@ int writeFile(const uint8_t command[], uint8_t response[])
   return ret;
 }
 
-int readFile(const uint8_t command[], uint8_t response[])
-{
+int readFile(const uint8_t command[], uint8_t response[]) {
   char filename[32 + 1];
   size_t len;
   size_t offset;
@@ -1425,23 +1283,21 @@ int readFile(const uint8_t command[], uint8_t response[])
   memset(filename, 0x00, sizeof(filename));
   memcpy(filename, &command[6 + command[3] + command[4 + command[3]]], command[5 + command[3] + command[4 + command[3]]]);
 
-  FILE *f = fopen(filename, "rb");
-  if (f == NULL)
-  {
+  FILE* f = fopen(filename, "rb");
+  if (f == NULL) {
     return -1;
   }
   fseek(f, offset, SEEK_SET);
   int ret = fread(&response[4], len, 1, f);
   fclose(f);
 
-  response[2] = 1;   // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = len; // parameter 1 length
 
   return len + 5;
 }
 
-int deleteFile(const uint8_t command[], uint8_t response[])
-{
+int deleteFile(const uint8_t command[], uint8_t response[]) {
   char filename[32 + 1];
   size_t len;
   size_t offset;
@@ -1454,8 +1310,7 @@ int deleteFile(const uint8_t command[], uint8_t response[])
 
   int ret = -1;
   struct stat st;
-  if (stat(filename, &st) == 0)
-  {
+  if (stat(filename, &st) == 0) {
     // Delete it if it exists
     ret = unlink(filename);
   }
@@ -1464,12 +1319,11 @@ int deleteFile(const uint8_t command[], uint8_t response[])
 
 #include <driver/uart.h>
 
-int applyOTA(const uint8_t command[], uint8_t response[])
-{
+int applyOTA(const uint8_t command[], uint8_t response[]) {
 #ifdef UNO_WIFI_REV2
 
-  const char *filename = "/fs/UPDATE.BIN";
-  FILE *updateFile = fopen(filename, "rb");
+  const char* filename = "/fs/UPDATE.BIN";
+  FILE* updateFile = fopen(filename, "rb");
 
   // init uart and write update to 4809
   uart_config_t uart_config;
@@ -1485,10 +1339,10 @@ int applyOTA(const uint8_t command[], uint8_t response[])
   uart_param_config(UART_NUM_1, &uart_config);
 
   uart_set_pin(UART_NUM_1,
-               1,                   // tx
-               3,                   // rx
-               UART_PIN_NO_CHANGE,  // rts
-               UART_PIN_NO_CHANGE); //cts
+                 1, // tx
+                 3, // rx
+                 UART_PIN_NO_CHANGE, // rts
+                 UART_PIN_NO_CHANGE); //cts
 
   uart_driver_install(UART_NUM_1, 1024, 0, 20, NULL, 0);
 
@@ -1497,34 +1351,29 @@ int applyOTA(const uint8_t command[], uint8_t response[])
 
   int retries = 0;
 
-  size_t remaining = st.st_size % 1024;
-  for (int i = 0; i < st.st_size; i++)
-  {
+  size_t remaining =  st.st_size % 1024;
+  for (int i=0; i<st.st_size; i++) {
     uint8_t c;
     uint8_t d;
 
     fread(&c, 1, 1, updateFile);
     retries = 0;
-    while (retries == 0 || (c != d && retries < 100))
-    {
-      uart_write_bytes(UART_NUM_1, (const char *)&c, 1);
+    while (retries == 0 || (c != d && retries < 100)) {
+      uart_write_bytes(UART_NUM_1, (const char*)&c, 1);
       uart_read_bytes(UART_NUM_1, &d, 1, 10);
       retries++;
     }
-    if (retries >= 100)
-    {
+    if (retries >= 100) {
       goto exit;
     }
   }
   // send remaining bytes (to reach page size) as 0xFF
-  for (int i = 0; i < remaining + 10; i++)
-  {
+  for (int i=0; i<remaining + 10; i++) {
     uint8_t c = 0xFF;
     uint8_t d;
     retries = 0;
-    while (retries == 0 || (c != d && retries < 100))
-    {
-      uart_write_bytes(UART_NUM_1, (const char *)&c, 1);
+    while (retries == 0 || (c != d && retries < 100)) {
+      uart_write_bytes(UART_NUM_1, (const char*)&c, 1);
       uart_read_bytes(UART_NUM_1, &d, 1, 10);
       retries++;
     }
@@ -1549,8 +1398,7 @@ exit:
 #endif
 }
 
-int renameFile(const uint8_t command[], uint8_t response[])
-{
+int renameFile(const uint8_t command[], uint8_t response[]) {
   char old_file_name[64 + 1] = {0};
   char new_file_name[64 + 1] = {0};
 
@@ -1564,15 +1412,14 @@ int renameFile(const uint8_t command[], uint8_t response[])
   rename(old_file_name, new_file_name);
 
   /* Set up the response packet containing the ERRNO error number */
-  response[2] = 1;     /* Number of parameters */
-  response[3] = 1;     /* Length of parameter 1 */
-  response[4] = errno; /* The actual payload */
+  response[2] = 1;      /* Number of parameters */
+  response[3] = 1;      /* Length of parameter 1 */
+  response[4] = errno;  /* The actual payload */
 
   return 6;
 }
 
-int existsFile(const uint8_t command[], uint8_t response[])
-{
+int existsFile(const uint8_t command[], uint8_t response[]) {
   char filename[32 + 1];
   size_t len;
   size_t offset;
@@ -1587,20 +1434,18 @@ int existsFile(const uint8_t command[], uint8_t response[])
 
   struct stat st;
   ret = stat(filename, &st);
-  if (ret != 0)
-  {
+  if (ret != 0) {
     st.st_size = -1;
   }
   memcpy(&response[4], &(st.st_size), sizeof(st.st_size));
 
-  response[2] = 1;                  // number of parameters
+  response[2] = 1; // number of parameters
   response[3] = sizeof(st.st_size); // parameter 1 length
 
   return 10;
 }
 
-int downloadFile(const uint8_t command[], uint8_t response[])
-{
+int downloadFile(const uint8_t command[], uint8_t response[]) {
   char url[64 + 1];
   char filename[64 + 1];
 
@@ -1611,7 +1456,7 @@ int downloadFile(const uint8_t command[], uint8_t response[])
   memcpy(filename, "/fs/", strlen("/fs/"));
   memcpy(&filename[strlen("/fs/")], &command[5 + command[3]], command[4 + command[3]]);
 
-  FILE *f = fopen(filename, "w");
+  FILE* f = fopen(filename, "w");
   downloadAndSaveFile(url, f, 0);
   fclose(f);
 
@@ -1653,15 +1498,15 @@ static const uint32_t crc_table[256] = {
     0xa00ae278, 0xd70dd2ee, 0x4e048354, 0x3903b3c2, 0xa7672661, 0xd06016f7, 0x4969474d, 0x3e6e77db,
     0xaed16a4a, 0xd9d65adc, 0x40df0b66, 0x37d83bf0, 0xa9bcae53, 0xdebb9ec5, 0x47b2cf7f, 0x30b5ffe9,
     0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6, 0xbad03605, 0xcdd70693, 0x54de5729, 0x23d967bf,
-    0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94, 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d};
+    0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94, 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
+};
 
-uint32_t crc_update(uint32_t crc, const void *data, size_t data_len)
+uint32_t crc_update(uint32_t crc, const void * data, size_t data_len)
 {
   const unsigned char *d = (const unsigned char *)data;
   unsigned int tbl_idx;
 
-  while (data_len--)
-  {
+  while (data_len--) {
     tbl_idx = (crc ^ *d) & 0xff;
     crc = (crc_table[tbl_idx] ^ (crc >> 8)) & 0xffffffff;
     d++;
@@ -1672,23 +1517,20 @@ uint32_t crc_update(uint32_t crc, const void *data, size_t data_len)
 
 int downloadOTA(const uint8_t command[], uint8_t response[])
 {
-  static const char *OTA_TAG = "OTA";
-  static const char *OTA_FILE = "/fs/UPDATE.BIN.LZSS";
-  static const char *OTA_TEMP_FILE = "/fs/UPDATE.BIN.LZSS.TMP";
+  static const char * OTA_TAG = "OTA";
+  static const char * OTA_FILE = "/fs/UPDATE.BIN.LZSS";
+  static const char * OTA_TEMP_FILE = "/fs/UPDATE.BIN.LZSS.TMP";
 
-  typedef enum OTA_Error
-  {
+  typedef enum OTA_Error {
     ERR_NO_ERROR = 0,
-    ERR_OPEN = 1,
-    ERR_LENGTH = 2,
-    ERR_CRC = 3,
-    ERR_RENAME = 4,
+    ERR_OPEN     = 1,
+    ERR_LENGTH   = 2,
+    ERR_CRC      = 3,
+    ERR_RENAME   = 4,
   };
 
-  union
-  {
-    struct __attribute__((packed))
-    {
+  union {
+    struct __attribute__((packed)) {
       uint32_t len;
       uint32_t crc32;
     } header;
@@ -1705,14 +1547,13 @@ int downloadOTA(const uint8_t command[], uint8_t response[])
   ESP_LOGI(OTA_TAG, "url: %s", url);
 
   /* Set up the response packet. */
-  response[2] = 1;            /* Number of parameters */
-  response[3] = 1;            /* Length of parameter 1 */
+  response[2] = 1; /* Number of parameters */
+  response[3] = 1; /* Length of parameter 1 */
   response[4] = ERR_NO_ERROR; /* The actual payload */
 
   /* Download the OTA file */
-  FILE *f = fopen(OTA_TEMP_FILE, "w+");
-  if (!f)
-  {
+  FILE * f = fopen(OTA_TEMP_FILE, "w+");
+  if (!f) {
     ESP_LOGE(OTA_TAG, "fopen(..., \"w+\") error: %d", ferror(f));
     response[4] = ERR_OPEN;
     goto ota_cleanup;
@@ -1729,8 +1570,7 @@ int downloadOTA(const uint8_t command[], uint8_t response[])
   ESP_LOGI(OTA_TAG, "ota image crc32 = %X", ota_header.header.crc32);
 
   /* Check length. */
-  if (ota_header.header.len != ota_size)
-  {
+  if (ota_header.header.len != ota_size) {
     ESP_LOGE(OTA_TAG, "error ota length: expected %d, actual %d", ota_header.header.len, ota_size);
     response[4] = ERR_LENGTH;
     goto ota_cleanup;
@@ -1740,8 +1580,7 @@ int downloadOTA(const uint8_t command[], uint8_t response[])
   crc32 = 0xFFFFFFFF;
   /* Calculate CRC */
   c = fgetc(f);
-  while (c != EOF)
-  {
+  while (c != EOF) {
     crc32 = crc_update(crc32, &c, 1);
     c = fgetc(f);
   }
@@ -1749,8 +1588,7 @@ int downloadOTA(const uint8_t command[], uint8_t response[])
   crc32 ^= 0xFFFFFFFF;
 
   /* Check CRC. */
-  if (ota_header.header.crc32 != crc32)
-  {
+  if (ota_header.header.crc32 != crc32) {
     ESP_LOGE(OTA_TAG, "error ota crc: expected %X, actual %X", ota_header.header.crc32, crc32);
     response[4] = ERR_CRC;
     goto ota_cleanup;
@@ -1762,8 +1600,7 @@ int downloadOTA(const uint8_t command[], uint8_t response[])
   /* Rename in case of success. */
   errno = 0;
   rename(OTA_TEMP_FILE, OTA_FILE);
-  if (errno)
-  {
+  if (errno) {
     ESP_LOGE(OTA_TAG, "rename(...) error: %d", errno);
     response[4] = ERR_RENAME;
     goto ota_cleanup;
@@ -1814,8 +1651,7 @@ void CommandHandlerClass::begin()
 {
   pinMode(GPIO_IRQ, OUTPUT);
 
-  for (int i = 0; i < MAX_SOCKETS; i++)
-  {
+  for (int i = 0; i < MAX_SOCKETS; i++) {
     socketTypes[i] = 255;
   }
 
@@ -1827,33 +1663,28 @@ void CommandHandlerClass::begin()
   xTaskCreatePinnedToCore(CommandHandlerClass::gpio0Updater, "gpio0Updater", 8192, NULL, 1, NULL, 1);
 }
 
-#define UDIV_UP(a, b) (((a) + (b)-1) / (b))
+#define UDIV_UP(a, b) (((a) + (b) - 1) / (b))
 #define ALIGN_UP(a, b) (UDIV_UP(a, b) * (b))
 
 int CommandHandlerClass::handle(const uint8_t command[], uint8_t response[])
 {
   int responseLength = 0;
 
-  if (command[0] == 0xe0 && command[1] < NUM_COMMAND_HANDLERS)
-  {
+  if (command[0] == 0xe0 && command[1] < NUM_COMMAND_HANDLERS) {
     CommandHandlerType commandHandlerType = commandHandlers[command[1]];
 
-    if (commandHandlerType)
-    {
+    if (commandHandlerType) {
       responseLength = commandHandlerType(command, response);
     }
   }
 
-  if (responseLength == 0)
-  {
+  if (responseLength == 0) {
     response[0] = 0xef;
     response[1] = 0x00;
     response[2] = 0xee;
 
     responseLength = 3;
-  }
-  else
-  {
+  } else {
     response[0] = 0xe0;
     response[1] = (0x80 | command[1]);
     response[responseLength - 1] = 0xee;
@@ -1864,10 +1695,9 @@ int CommandHandlerClass::handle(const uint8_t command[], uint8_t response[])
   return ALIGN_UP(responseLength, 4);
 }
 
-void CommandHandlerClass::gpio0Updater(void *)
+void CommandHandlerClass::gpio0Updater(void*)
 {
-  while (1)
-  {
+  while (1) {
     CommandHandler.updateGpio0Pin();
   }
 }
@@ -1878,47 +1708,36 @@ void CommandHandlerClass::updateGpio0Pin()
 
   int available = 0;
 
-  for (int i = 0; i < MAX_SOCKETS; i++)
-  {
-    if (socketTypes[i] == 0x00)
-    {
-      if (tcpServers[i] && tcpServers[i].available())
-      {
+  for (int i = 0; i < MAX_SOCKETS; i++) {
+    if (socketTypes[i] == 0x00) {
+      if (tcpServers[i] && tcpServers[i].available()) {
         available = 1;
         break;
-      }
-      else if (tcpClients[i] && tcpClients[i].connected() && tcpClients[i].available())
-      {
+      } else if (tcpClients[i] && tcpClients[i].connected() && tcpClients[i].available()) {
         available = 1;
         break;
       }
     }
 
-    if (socketTypes[i] == 0x01 && udps[i] && (udps[i].available() || udps[i].parsePacket()))
-    {
+    if (socketTypes[i] == 0x01 && udps[i] && (udps[i].available() || udps[i].parsePacket())) {
       available = 1;
       break;
     }
 
-    if (socketTypes[i] == 0x02 && tlsClients[i] && tlsClients[i].connected() && tlsClients[i].available())
-    {
+    if (socketTypes[i] == 0x02 && tlsClients[i] && tlsClients[i].connected() && tlsClients[i].available()) {
       available = 1;
       break;
     }
 
-    if (socketTypes[i] == 0x04 && bearsslClient.connected() && bearsslClient.available())
-    {
+    if (socketTypes[i] == 0x04 && bearsslClient.connected() && bearsslClient.available()) {
       available = 1;
       break;
     }
   }
 
-  if (available)
-  {
+  if (available) {
     digitalWrite(GPIO_IRQ, HIGH);
-  }
-  else
-  {
+  } else {
     digitalWrite(GPIO_IRQ, LOW);
   }
 
@@ -1945,19 +1764,16 @@ void CommandHandlerClass::handleWiFiDisconnect()
   // workaround to stop lwip_connect hanging
   // close all non-listening sockets
 
-  for (int i = 0; i < CONFIG_LWIP_MAX_SOCKETS; i++)
-  {
-    struct sockaddr_in addr;
+  for (int i = 0; i < CONFIG_LWIP_MAX_SOCKETS; i++) {
+    struct sockaddr_in addr; 
     size_t addrLen = sizeof(addr);
     int socket = LWIP_SOCKET_OFFSET + i;
 
-    if (lwip_getsockname(socket, (sockaddr *)&addr, &addrLen) < 0)
-    {
+    if (lwip_getsockname(socket, (sockaddr*)&addr, &addrLen) < 0) {
       continue;
     }
 
-    if (addr.sin_addr.s_addr != 0)
-    {
+    if (addr.sin_addr.s_addr != 0) {
       // non-listening socket, close
       close(socket);
     }
