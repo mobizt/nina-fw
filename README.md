@@ -1,4 +1,4 @@
-# Arduino NINA-W102 firmware build 21110 based on original firmware v1.4.8
+# Arduino NINA-W102 firmware build 21120 based on original firmware v1.4.8
 
 This is the fork of Arduino NINA-W102 firmware.
 
